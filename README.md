@@ -2,6 +2,30 @@ Globalpoc
 ==================
 Respositório de arquivos de configuração e instalação da [Globalsys](http://www.globalsys.com.br). Aplicável em novos servidores, criando toda a estrutura Oracle de acordo com as boas práticas.
 
+Para baixar a ferramenta `git´ no servidor alvo, execute os seguintes comandos:
+~~~
+## Instalando dependências ##
+yum install curl-devel expat-devel gettext-devel openssl-devel zlib-devel -y
+yum install gcc perl-ExtUtils-MakeMaker -y
+yum remove git -y  #Apenas para servidores que já estão sendo utilizados, para remover qualquer versão que já possa estar instalada
+
+## Baixando Git ##
+cd /usr/src
+wget https://www.kernel.org/pub/software/scm/git/git-2.2.2.tar.gz
+tar xzf git-2.2.2.tar.gz
+
+## Instalando ##
+cd git-2.2.2
+make prefix=/usr/local/git all
+make prefix=/usr/local/git install
+echo "export PATH=$PATH:/usr/local/git/bin" >> /etc/bashrc
+source /etc/bashrc
+
+## Verificando instalação ##
+git --version
+~~~
+==================
+
 ###Gerais
 Diretório que contém todos os arquivos SQL utilizados em consultas. Após instalação o diretório default será:
 ~~~

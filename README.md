@@ -15,5 +15,6 @@ Após efetuar o download do repositório no servidor alvo, entre no diretório, 
 ~~~ 
 cd ~/Globalpoc
 chmod +x install.sh
-./install.sh
+##Ex: ./install.sh 6 11
+./install.sh <versão so> <versao banco>
 ~~~

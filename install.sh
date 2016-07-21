@@ -80,8 +80,8 @@ yum -y install nscd
 yum -y install xorg-x11-xauth
 yum -y install xorg-x11-apps
 yum -y install xorg-x11-utils
-yum install oracleasm-support
-yum update
+yum -y install oracleasm-support
+yum -y update
 
 # Criando usuários
 echo ""
@@ -134,7 +134,8 @@ fi
 echo ""
 echo "Inserindo parâmetros em /etc/sysctl.conf para versão Oracle Database "$VERDB"."
 if [[ "$VERDB" == "11" ]]; then
-	echo "fs.aio-max-nr=1048576
+	echo "
+fs.aio-max-nr=1048576
 fs.file-max=6815744
 kernel.shmmni=4096
 kernel.sem=250 32000 100 128
@@ -148,14 +149,12 @@ net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
 	echo "Inserido com sucesso!"
-fi
 
-if [[ "$VERDB" == "10" ]]; then
+elif [[ "$VERDB" == "10" ]]; then
 	echo "Parâmetros do 10"
 	echo "Inserido com sucesso!"
-fi
 
-if [[ "$VERDB" == "12" ]]; then
+elif [[ "$VERDB" == "12" ]]; then
 	echo "Parâmetros do 12"
 	echo "Inserido com sucesso!"
 fi
@@ -165,7 +164,8 @@ echo "Inserindo parâmetros em /etc/security/limits.conf para versão Oracle Dat
 MEMKB=$(awk '/MemTotal:/ {print $2}' /proc/meminfo)
 read -p "Memória total do servidor é $MEMKB kB, defina o valor apropriado para 'memlock': " MEMLOCK
 if [[ "$VERDB" == "11" ]]; then
-		echo "oracle soft nofile 1024
+		echo "
+oracle soft nofile 1024
 oracle hard nofile 65536
 oracle soft nproc 2047
 oracle hard nproc 16384
@@ -179,14 +179,12 @@ grid hard nproc	16384
 grid soft nofile 10240
 grid hard nofile 65536" >> /etc/security/limits.conf
 	echo "Inserido com sucesso!"
-fi
 
-if [[ "$VERDB" == "10" ]]; then
+elif [[ "$VERDB" == "10" ]]; then
 	echo "Parâmetros do 10"
 	echo "Inserido com sucesso!"
-fi
 
-if [[ "$VERDB" == "12" ]]; then
+elif [[ "$VERDB" == "12" ]]; then
 	echo "Parâmetros do 12"
 	echo "Inserido com sucesso!"
 fi

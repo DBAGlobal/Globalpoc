@@ -39,7 +39,7 @@ if [ -z "${VERDB}" ]; then
 fi
 
 # Instalando pacotes iniciais
-echo "Aqui os pacotes são instalados e atualizados"
+echo "## Instalando pacotes e executando UPDATE ##"
 yum -y install unzip
 yum -y install ntp
 yum -y install binutils-2*x86_64*
@@ -79,10 +79,10 @@ yum -y install nscd
 yum -y install xorg-x11-xauth
 yum -y install xorg-x11-apps
 yum -y install xorg-x11-utils
-yum install oracle-rdbms-server-11gR2-preinstall
 yum install oracleasm-support
 yum update
 
+# Desabilitando serviços e setando os parâmetros
 echo "Desabilitando serviços, como IPv6"
 if [ "$VERORA" == "5" ] || [ "$VERORA" == "6" ]; then
 	chkconfig iptables off
@@ -99,4 +99,20 @@ else
 	systemctl disable firewalld
 	systemctl start sshd.service
 	systemctl enable sshd.service
+fi
+
+echo "Verificando SELINUX..."
+SELINUX=$(awk '/SELINUX=/ {print $1}' /etc/selinux/config |grep -o 'disabled')
+if [ "$SELINUX" == "disabled" ]; then
+	echo "Selinux marcado como DISABLED."
+else
+	echo "Selinux está ativo, troque o parâmetro no arquivo: /etc/selinux/config"
+	echo "Alterando o valor de SELINUX={enforcing|permissive} para {disabled}."
+	echo "SELINUX=disabled"
+	echo "Prossiga com a instalação quando o arquivo for alterado."
+	echo ""
+	read -p "Deseja prosseguir? (s/n): " SEL
+	if [ "$SEL" == "n" ]; then
+		exit 1
+	fi
 fi

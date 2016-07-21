@@ -2,7 +2,7 @@ Globalpoc
 ==================
 Respositório de arquivos de configuração e instalação da [Globalsys](http://www.globalsys.com.br). Aplicável em novos servidores, criando toda a estrutura Oracle de acordo com as boas práticas.
 
-Para baixar a ferramenta `git´ no servidor alvo, execute os seguintes comandos:
+Para baixar a ferramenta `git` no servidor alvo, execute os seguintes comandos:
 ~~~
 ## Instalando dependências ##
 yum install curl-devel expat-devel gettext-devel openssl-devel zlib-devel -y

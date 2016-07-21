@@ -18,3 +18,12 @@ chmod +x install.sh
 # Exemplo: ./install.sh 6 11
 ./install.sh <versão so> <versao banco>
 ~~~
+
+####Atualização
+Para baixar atualizações do repositório execute:
+~~~
+su - root
+cd ~/Globalpoc
+chmod +x update.sh
+./update.sh
+~~~

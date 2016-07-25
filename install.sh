@@ -188,3 +188,15 @@ elif [[ "$VERDB" == "12" ]]; then
 	echo "Parâmetros do 12"
 	echo "Inserido com sucesso!"
 fi
+
+# Configurações de rede
+echo ""
+echo "#HOSTNAME#"
+echo "Para não alterar, pressione a tecla ENTER, certifique-se de que não tenha digitado nenhum caracter antes."
+read -p "Defina o Hostname da máquina: " HOSTNAME
+
+if [[ ! -z "${HOSTNAME}" ]]; then
+	HOST=$(awk '/HOSTNAME=/ {print $1}' /etc/sysconfig/network)
+	sed -i -e 's/'$HOST'/#'$HOST'/g' /etc/sysconfig/network
+	echo "HOSTNAME=$HOSTNAME" >> /etc/sysconfig/network
+fi

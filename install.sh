@@ -81,6 +81,14 @@ yum -y install xorg-x11-xauth
 yum -y install xorg-x11-apps
 yum -y install xorg-x11-utils
 yum -y install oracleasm-support
+yum -y install compat-db-*
+yum -y install binutils*
+yum -y install control-center*
+yum -y install glibc-*
+yum -y install libstdc++-*
+yum -y install pdksh-*
+yum -y install sysstat-*
+yum -y install libXp*
 yum -y update
 
 # Criando usuários

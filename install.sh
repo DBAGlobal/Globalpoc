@@ -12,8 +12,13 @@ echo "--------------"
 echo "Você definiu a versão do S.O como Oracle Linux "$VERORA" e do banco como Oracle Database "$VERDB"."
 read -p "Deseja continuar com a instalação? (s/n): " INST
 
-if [[ "$INST" == "n" ]]; then
+if [[ "$INST" == "n" ]] || [[ "$INST" == "N" ]]; then
 	echo "Instalação cancelada!"
+	exit 1
+elif [[ "$INST" == "s" ]] || [[ "$INST" == "S" ]]; then
+	echo "Prosseguindo com a instalação."
+else
+	echo "Opção inválida!"
 	exit 1
 fi
 

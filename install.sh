@@ -113,6 +113,7 @@ yum -y install libstdc++-*
 yum -y install pdksh-*
 yum -y install sysstat-*
 yum -y install libXp*
+yum -y install xterm
 yum -y update
 
 # Criando usuários

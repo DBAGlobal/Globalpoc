@@ -10,6 +10,25 @@ echo "- Verifique se o arquivo /etc/yum.repos.d/public-yum-ol"$VERORA".repo exis
 echo "versão correta de atualização está descomentada, comente o que não precisa ser atualizado."
 echo "--------------"
 echo "Você definiu a versão do S.O como Oracle Linux "$VERORA" e do banco como Oracle Database "$VERDB"."
+echo ""
+echo "Checando certificado de versões..."
+
+if [[ "$VERDB" == "12" ]] && [[ "$VERORA" == "7" ]] || [[ "$VERORA" == "6" ]] || [[ "$VERORA" == "5" ]]; then
+	echo "Versões certificadas, continuando instalação."
+	exit 0
+elif [[ "$VERDB" == "11" ]] && [[ "$VERORA" == "7" ]] || [[ "$VERORA" == "6" ]] || [[ "$VERORA" == "5" ]] || [[ "$VERORA" == "4" ]]; then
+	echo "Versões certificadas, continuando instalação."
+	exit 0
+elif [[ "$VERDB" == "10" ]] && [[ "$VERORA" == "5" ]] || [[ "$VERORA" == "4" ]]; then
+	echo "Versões certificadas, continuando instalação."
+	exit 0
+else
+	echo "A instalação do Oracle Linux "$VERORA" juntamente com o Oracle Database "$VERDB", não é certificada pela Oracle."
+	echo "Entre em contato com o DBA responsável pela instalação do ambiente para ignorar este requisito."
+	echo "Instalação interrompida!"
+	exit 1
+fi
+
 read -p "Deseja continuar com a instalação? (s/n): " INST
 
 if [[ "$INST" == "n" ]] || [[ "$INST" == "N" ]]; then
@@ -98,24 +117,70 @@ yum -y update
 
 # Criando usuários
 echo ""
-echo "Criando usuários 'oracle' e 'grid'"
+echo "Criando usuários."
 echo ""
-groupadd -g 1000 oinstall
-groupadd -g 1020 asmadmin
-groupadd -g 1021 asmdba
-groupadd -g 1031 dba
-groupadd -g 1022 asmoper
-useradd -u 1100 -g oinstall -G asmadmin,asmdba,dba grid
-useradd -u 1102 -g oinstall -G dba,asmdba oracle
-echo "Usuários criados!"
-echo ""
-echo "## Definindo senha de usuários ##"
-passwd oracle
-passwd grid
+if [[ "$VERDB" == "11" ]] || [[ "$VERDB" == "12" ]]; then
+	groupadd -g 1000 oinstall
+	groupadd -g 1020 asmadmin
+	groupadd -g 1021 asmdba
+	groupadd -g 1031 dba
+	groupadd -g 1022 asmoper
+	useradd -u 1100 -g oinstall -G asmadmin,asmdba,dba grid
+	useradd -u 1102 -g oinstall -G dba,asmdba oracle
+	echo "Usuários criados!"
+	echo ""
+	echo "## Definindo senha de usuários ##"
+	passwd oracle
+	passwd grid
+	echo ""
+	echo "Editando /etc/profile ..."
+	echo"
+if [ $USER = "oracle" ]; then
+	if [ $SHELL = "/bin/ksh" ]; then
+		ulimit -p 16384
+		ulimit -n 65536
+	else
+		ulimit -u 16384 -n 65536
+	fi
+fi
+
+# GRID
+if [ $USER = "grid" ]; then
+	if [ $SHELL = "/bin/ksh" ]; then
+		ulimit -p 16384
+		ulimit -n 65536
+	else
+		ulimit -u 16384 -n 65536 
+	fi
+fi" >> /etc/profile
+elif [[ "$VERDB" == "10" ]]; then
+	groupadd -g 1021 asmdba
+	groupadd -g 1000 oinstall
+	groupadd -g 1031 dba
+	useradd -u 1102 -g oinstall -G dba,asmdba oracle
+	echo "Usuário Oracle criado!"
+	echo ""
+	echo "## Definindo senha de usuário ##"
+	passwd oracle
+	echo ""
+	echo "Editando /etc/profile ..."
+	echo"
+if [ $USER = "oracle" ]; then
+	if [ $SHELL = "/bin/ksh" ]; then
+		ulimit -p 16384
+		ulimit -n 65536
+	else
+		ulimit -u 16384 -n 65536
+	fi
+fi" >> /etc/profile
+else
+	echo "Versão do banco não reconhecida."
+	exit 1
+fi
 
 # Desabilitando serviços e setando os parâmetros
 echo ""
-echo "Desabilitando serviços, como IPv6"
+echo "Desabilitando serviços IPv6, IpTables, Auditd, Restorecond e subindo Netfs, NSCD, SSH."
 echo ""
 if [[ "$VERORA" == "5" ]] || [[ "$VERORA" == "6" ]]; then
 	chkconfig iptables off
@@ -146,7 +211,7 @@ fi
 
 echo ""
 echo "Inserindo parâmetros em /etc/sysctl.conf para versão Oracle Database "$VERDB"."
-if [[ "$VERDB" == "11" ]]; then
+if [[ "$VERDB" == "11" ]] || [[ "$VERDB" == "10" ]]; then
 	echo "
 fs.aio-max-nr=1048576
 fs.file-max=6815744
@@ -161,14 +226,23 @@ net.core.wmem_max=1048586
 net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
-	echo "Inserido com sucesso!"
-
-elif [[ "$VERDB" == "10" ]]; then
-	echo "Parâmetros do 10"
+	sysctl -p /etc/sysctl.conf
+	echo ""
 	echo "Inserido com sucesso!"
 
 elif [[ "$VERDB" == "12" ]]; then
-	echo "Parâmetros do 12"
+	echo "fs.aio-max-nr = 1048576
+fs.file-max = 6815744
+kernel.shmall = 2097152
+kernel.shmmax = 4294967295
+kernel.shmmni = 4096
+kernel.sem = 250 32000 100 128
+net.ipv4.ip_local_port_range = 9000 65500
+net.core.rmem_default = 262144
+net.core.rmem_max = 4194304
+net.core.wmem_default = 262144
+net.core.wmem_max = 1048576" >> /etc/sysctl.conf
+	/sbin/sysctl -p
 	echo "Inserido com sucesso!"
 fi
 
@@ -176,8 +250,7 @@ echo ""
 echo "Inserindo parâmetros em /etc/security/limits.conf para versão Oracle Database "$VERDB"."
 MEMKB=$(awk '/MemTotal:/ {print $2}' /proc/meminfo)
 read -p "Memória total do servidor é $MEMKB kB, defina o valor apropriado para 'memlock': " MEMLOCK
-if [[ "$VERDB" == "11" ]]; then
-		echo "
+echo "
 oracle soft nofile 1024
 oracle hard nofile 65536
 oracle soft nproc 2047
@@ -191,25 +264,15 @@ grid soft nproc 16384
 grid hard nproc	16384
 grid soft nofile 10240
 grid hard nofile 65536" >> /etc/security/limits.conf
-	echo "Inserido com sucesso!"
-
-elif [[ "$VERDB" == "10" ]]; then
-	echo "Parâmetros do 10"
-	echo "Inserido com sucesso!"
-
-elif [[ "$VERDB" == "12" ]]; then
-	echo "Parâmetros do 12"
-	echo "Inserido com sucesso!"
-fi
+echo "Inserido com sucesso!"
 
 # Configurações de rede
 echo ""
+echo ""
 echo "#HOSTNAME#"
-echo "Para não alterar, pressione a tecla ENTER, certifique-se de que não tenha digitado nenhum caracter antes."
-read -p "Defina o Hostname da máquina: " HOSTNAME
+read -p "Digite o atual HOSTNAME do servidor: " HOSTNAME
+read -p "Digite o atual IP do servidor: " IP
 
-if [[ ! -z "${HOSTNAME}" ]]; then
-	HOST=$(awk '/HOSTNAME=/ {print $1}' /etc/sysconfig/network)
-	sed -i -e 's/'$HOST'/#'$HOST'/g' /etc/sysconfig/network
-	echo "HOSTNAME=$HOSTNAME" >> /etc/sysconfig/network
+if [[ ! -z "${HOSTNAME}" ]] && [[ ! -z "${IP}" ]]; then
+	echo "$IP 	$HOSTNAME" >> /etc/hosts
 fi

@@ -15,13 +15,10 @@ echo "Checando certificado de versões..."
 
 if [[ "$VERDB" == "12" ]] && [[ "$VERORA" == "7" ]] || [[ "$VERORA" == "6" ]] || [[ "$VERORA" == "5" ]]; then
 	echo "Versões certificadas, continuando instalação."
-	exit 0
 elif [[ "$VERDB" == "11" ]] && [[ "$VERORA" == "7" ]] || [[ "$VERORA" == "6" ]] || [[ "$VERORA" == "5" ]] || [[ "$VERORA" == "4" ]]; then
 	echo "Versões certificadas, continuando instalação."
-	exit 0
 elif [[ "$VERDB" == "10" ]] && [[ "$VERORA" == "5" ]] || [[ "$VERORA" == "4" ]]; then
 	echo "Versões certificadas, continuando instalação."
-	exit 0
 else
 	echo "A instalação do Oracle Linux "$VERORA" juntamente com o Oracle Database "$VERDB", não é certificada pela Oracle."
 	echo "Entre em contato com o DBA responsável pela instalação do ambiente para ignorar este requisito."
@@ -36,7 +33,6 @@ if [[ "$INST" == "n" ]] || [[ "$INST" == "N" ]]; then
 	exit 1
 elif [[ "$INST" == "s" ]] || [[ "$INST" == "S" ]]; then
 	echo "Prosseguindo com a instalação."
-	exit 0
 else
 	echo "Opção inválida!"
 	exit 1
@@ -126,11 +122,9 @@ while [[ aa == 0 ]]; do
 	if [[ "$ASM" == "n" ]] || [[ "$ASM" == "N" ]]; then
 		echo "Estrutura para ASM não será criada!"
 		aa = 1
-		exit 0
 	elif [[ "$ASM" == "s" ]] || [[ "$ASM" == "S" ]]; then
 		echo "Preparando criação de estrutura ASM."
 		aa = 2
-		exit 0
 	else
 		echo "Opção inválida!"
 	fi

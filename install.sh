@@ -36,6 +36,7 @@ if [[ "$INST" == "n" ]] || [[ "$INST" == "N" ]]; then
 	exit 1
 elif [[ "$INST" == "s" ]] || [[ "$INST" == "S" ]]; then
 	echo "Prosseguindo com a instalação."
+	exit 0
 else
 	echo "Opção inválida!"
 	exit 1
@@ -116,11 +117,30 @@ yum -y install libXp*
 yum -y install xterm
 yum -y update
 
+echo ""
+echo "@@@@@@@@@@@@@@@@@@@"
+read -p "Gostaria de criar a estrutura de ASM? (s/n): " ASM
+aa = 0
+
+while [[ aa == 0 ]]; do
+	if [[ "$ASM" == "n" ]] || [[ "$ASM" == "N" ]]; then
+		echo "Estrutura para ASM não será criada!"
+		aa = 1
+		exit 0
+	elif [[ "$ASM" == "s" ]] || [[ "$ASM" == "S" ]]; then
+		echo "Preparando criação de estrutura ASM."
+		aa = 2
+		exit 0
+	else
+		echo "Opção inválida!"
+	fi
+done
+
 # Criando usuários
 echo ""
 echo "Criando usuários."
 echo ""
-if [[ "$VERDB" == "11" ]] || [[ "$VERDB" == "12" ]]; then
+if [[ "$VERDB" == "11" ]] || [[ "$VERDB" == "12" ]] && [[ aa == 2 ]]; then
 	groupadd -g 1000 oinstall
 	groupadd -g 1020 asmadmin
 	groupadd -g 1021 asmdba
@@ -154,6 +174,13 @@ if [ $USER = "grid" ]; then
 		ulimit -u 16384 -n 65536 
 	fi
 fi" >> /etc/profile
+	echo ""
+	echo "Criando diretórios."
+	mkdir -p  /u01/app/$VERDB.2.0/grid
+	mkdir -p /u01/app/oracle/product/$VERDB.2.0/db_1
+	chmod -R 775 /u01
+	chown -R grid:oinstall /u01
+	chown -R oracle:oinstall /u01/app/oracle
 elif [[ "$VERDB" == "10" ]]; then
 	groupadd -g 1021 asmdba
 	groupadd -g 1000 oinstall
@@ -174,9 +201,35 @@ if [ $USER = "oracle" ]; then
 		ulimit -u 16384 -n 65536
 	fi
 fi" >> /etc/profile
-else
-	echo "Versão do banco não reconhecida."
-	exit 1
+	echo ""
+	echo "Criando diretórios."
+	mkdir -p /u01/app/oracle/product/$VERDB.2.0/db_1
+	chmod -R 775 /u01
+	chown -R oracle:oinstall /u01
+elif [[ "$VERDB" == "11" ]] || [[ "$VERDB" == "12" ]] && [[ aa == 1 ]]; then
+	groupadd -g 1000 oinstall
+	groupadd -g 1031 dba
+	useradd -u 1102 -g oinstall -G dba oracle
+	echo "Usuários criados!"
+	echo ""
+	echo "## Definindo senha de usuários ##"
+	passwd oracle
+	echo ""
+	echo "Editando /etc/profile ..."
+	echo"
+if [ $USER = "oracle" ]; then
+	if [ $SHELL = "/bin/ksh" ]; then
+		ulimit -p 16384
+		ulimit -n 65536
+	else
+		ulimit -u 16384 -n 65536
+	fi
+fi" >> /etc/profile
+	echo ""
+	echo "Criando diretórios."
+	mkdir -p /u01/app/oracle/product/$VERDB.2.0/db_1
+	chmod -R 775 /u01
+	chown -R oracle:oinstall /u01
 fi
 
 # Desabilitando serviços e setando os parâmetros

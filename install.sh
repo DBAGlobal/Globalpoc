@@ -116,15 +116,15 @@ yum -y update
 echo ""
 echo "@@@@@@@@@@@@@@@@@@@"
 read -p "Gostaria de criar a estrutura de ASM? (s/n): " ASM
-aa = 0
+aa=0
 
 while [[ aa == 0 ]]; do
 	if [[ "$ASM" == "n" ]] || [[ "$ASM" == "N" ]]; then
 		echo "Estrutura para ASM não será criada!"
-		aa = 1
+		aa=1
 	elif [[ "$ASM" == "s" ]] || [[ "$ASM" == "S" ]]; then
 		echo "Preparando criação de estrutura ASM."
-		aa = 2
+		aa=2
 	else
 		echo "Opção inválida!"
 	fi
@@ -270,10 +270,9 @@ net.core.rmem_default=262144
 net.core.rmem_max=4194304
 net.core.wmem_default=262144
 net.core.wmem_max=1048586
-
-net.ipv6.conf.all.disable_ipv6 = 1
-net.ipv6.conf.default.disable_ipv6 = 1
-net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
+net.ipv6.conf.all.disable_ipv6=1
+net.ipv6.conf.default.disable_ipv6=1
+net.ipv6.conf.lo.disable_ipv6=1" >> /etc/sysctl.conf
 	sysctl -p /etc/sysctl.conf
 	echo ""
 	echo "Inserido com sucesso!"

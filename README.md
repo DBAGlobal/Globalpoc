@@ -29,6 +29,15 @@ git --version
 ~~~
 ==================
 
+###Download do repositório
+Após instalar a ferramente git no servidor alvo.
+Faça o donwload do repositório executando o seguinte comando:
+~~~
+git clone https://github.com/DBAGlobal/Globalpoc
+~~~
+
+==================
+
 ###Gerais
 Diretório que contém todos os arquivos SQL utilizados em consultas. Após instalação o diretório default será:
 ~~~

@@ -323,3 +323,14 @@ read -p "Digite o atual IP do servidor: " IP
 if [[ ! -z "${HOSTNAME}" ]] && [[ ! -z "${IP}" ]]; then
 	echo "$IP 	$HOSTNAME" >> /etc/hosts
 fi
+
+# Diretórios de scripts Globalsys
+function globalsys(){
+	su - oracle
+	mkdir -p /home/oracle/globalsys/gerais
+	mkdir -p /home/oracle/globalsys/scripts
+	exit
+	;
+}
+
+globalsys

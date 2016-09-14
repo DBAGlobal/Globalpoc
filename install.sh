@@ -330,7 +330,6 @@ function globalsys(){
 	mkdir -p /home/oracle/globalsys/gerais
 	mkdir -p /home/oracle/globalsys/scripts
 	exit
-	;
 }
 
 globalsys

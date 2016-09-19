@@ -324,6 +324,10 @@ if [[ ! -z "${HOSTNAME}" ]] && [[ ! -z "${IP}" ]]; then
 	echo "$IP 	$HOSTNAME" >> /etc/hosts
 fi
 
+# Download dos arquivos para o Oracle 11.2.0.4
+function 11.2.0.4(){
+	
+}
 # Diretórios de scripts Globalsys
 function globalsys(){
 	su - oracle

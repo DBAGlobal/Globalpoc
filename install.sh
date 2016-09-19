@@ -326,7 +326,11 @@ fi
 
 # Download dos arquivos para o Oracle 11.2.0.4
 function 11.2.0.4(){
-	
+	echo "Baixando OPatch de Julho/2016 para 11g."
+	echo "Isso pode demorar alguns minutos."
+	echo "Aguarde..."
+	svn export https://github.com/DBAGlobal/Globalpoc/trunk/Softwares/11g/p6880880_112000_Linux-x86-64.zip
+	mv p6880880_112000_Linux-x86-64.zip $ORACLE_HOME
 }
 # Diretórios de scripts Globalsys
 function globalsys(){
